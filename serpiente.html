@@ -213,16 +213,16 @@
     <section class="controles" aria-label="Controles de dirección">
       <!-- Las celdas vacías ayudan a que los botones queden en la posición correcta -->
       <button class="vacio" tabindex="-1" aria-hidden="true">-</button>
-      <button onclick="cambiarDireccion('arriba')" aria-label="Mover arriba" class="btn-direccion">⬆️</button>
+      <button id="btnArriba" onclick="cambiarDireccion('arriba')" aria-label="Mover arriba" class="btn-direccion" disabled>⬆️</button>
       <button class="vacio" tabindex="-1" aria-hidden="true">-</button>
 
-      <button onclick="cambiarDireccion('izquierda')" aria-label="Mover a la izquierda" class="btn-direccion">⬅️</button>
+      <button id="btnIzquierda"  onclick="cambiarDireccion('izquierda')" aria-label="Mover a la izquierda" class="btn-direccion" disabled>⬅️</button>
       <!-- El botón de pausa está en el centro, como el corazón del control -->
       <button onclick="pausarJuego()" aria-label="Pausar o reanudar el juego" class="btn-pausa">⏸️</button>
-      <button onclick="cambiarDireccion('derecha')" aria-label="Mover a la derecha" class="btn-direccion">➡️</button>
+      <button id="btnDerecha"  onclick="cambiarDireccion('derecha')" aria-label="Mover a la derecha" class="btn-direccion" disabled>➡️</button>
 
       <button class="vacio" tabindex="-1" aria-hidden="true">-</button>
-      <button onclick="cambiarDireccion('abajo')" aria-label="Mover abajo" class="btn-direccion">⬇️</button>
+      <button id="btnAbajo"  onclick="cambiarDireccion('abajo')" aria-label="Mover abajo" class="btn-direccion" disabled>⬇️</button>
       <button class="vacio" tabindex="-1" aria-hidden="true">-</button>
     </section>
 

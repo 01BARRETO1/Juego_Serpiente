@@ -3,6 +3,11 @@
 const canvas = document.getElementById("canvasJuego");
 const ctx = canvas.getContext("2d");
 const TAMANIO_CELDA = 25;
+let intervaloSerpiente;
+let direccionActual;
+//Agregamos el arreglo manzana para guardar la nueva manzana y tener su posicion
+const manzana = [];
+let puntos = 0;
 
 /* 
 /////Taller serpiente parte 2/////
@@ -16,7 +21,7 @@ const TAMANIO_CELDA = 25;
   {x:8,y:0}
 ]; */
 
- //✅ EJERCICIO 1 Una serpiente horizontal.
+//✅ EJERCICIO 1 Una serpiente horizontal.
 /* 
 const serpiente = [{x:0,y:0},
   {x:1,y:0},
@@ -24,24 +29,25 @@ const serpiente = [{x:0,y:0},
 ];
  */
 
-  //✅ EJERCICIO 2 Ahora esta serpiente 
+//✅ EJERCICIO 2 Ahora esta serpiente 
 
- /* 
-  const serpiente = [{x:8,y:9},
-  {x:9,y:9},
-  {x:10,y:9},
-  {x:10,y:10}
+/* 
+ const serpiente = [{x:8,y:9},
+ {x:9,y:9},
+ {x:10,y:9},
+ {x:10,y:10}
 ];
- */
+*/
 
 //✅ EJERCICIO 3 .- Una serpiente de 5 cuadros subiendo pegada al borde izquierdo
 
-const serpiente = [{x:0,y:9},
-  {x:0,y:10},
-  {x:0,y:11},
-  {x:0,y:12},
-  {x:0,y:13}
+const serpiente = [{ x: 9, y: 9 },
+{ x: 9, y: 10 },
+{ x: 9, y: 11 },
+{ x: 9, y: 12 },
 ];
+
+
 
 
 
@@ -79,7 +85,11 @@ function dibujarTodo() {
   pintarParte(19,0);
    */
 
-  pintarSerpiente()
+  pintarSerpiente();
+  pintarComida();
+
+
+
 
 
 
@@ -153,7 +163,7 @@ function dibujarTodo() {
 function dibujarTablero() {
   for (let i = TAMANIO_CELDA; i < canvas.height; i += TAMANIO_CELDA) {
 
-    ctx.strokeStyle = "#00FF00"; 
+    ctx.strokeStyle = "#00FF00";
     ctx.beginPath();
     ctx.moveTo(i, 0);
     ctx.lineTo(i, canvas.width);
@@ -164,7 +174,7 @@ function dibujarTablero() {
   //Crear un segundo for para pintar las líneas horizontales
   for (let i = TAMANIO_CELDA; i < canvas.width; i += TAMANIO_CELDA) {
 
-    ctx.strokeStyle = "#00FF00"; 
+    ctx.strokeStyle = "#00FF00";
     ctx.beginPath();
     ctx.moveTo(0, i);
     ctx.lineTo(canvas.height, i);
@@ -198,33 +208,307 @@ function pintarParte(lineaX, lineaY) {
 //CREACIÓN DE LA SERPIENTE
 //PASO 1 .- Crear un arreglo:
 //PASO 2 Agregar objetos de ejemplo con coordenadas
-  //ESTÁ EN LA PARTE DE ARRIBA, DADO QUE ES LLAMADA AL PRICIPIO PARA LEERSE EN CASCADA DEBE ESTAR INICIALIZADA ARRIBA
+//ESTÁ EN LA PARTE DE ARRIBA, DADO QUE ES LLAMADA AL PRICIPIO PARA LEERSE EN CASCADA DEBE ESTAR INICIALIZADA ARRIBA
 //PASO 3 
 //Crear la función: pintarSerpiente()
-function pintarSerpiente(){
-  
-  for(let i=0; i<serpiente.length; i++){
-    let cuerpo=serpiente[i];
-    if(i===0){
+function pintarSerpiente() {
+
+  for (let i = 0; i < serpiente.length; i++) {
+    let cuerpo = serpiente[i];
+    if (i === 0) {
       // Primer cuadro (cabeza)
-      ctx.fillStyle="#801f6f";
-      ctx.strokeStyle="#F5F30C"
-    }else{
+      ctx.fillStyle = "#801f6f";
+      ctx.strokeStyle = "#F5F30C"
+    } else {
       // Resto del cuerpo
       ctx.fillStyle = "#27D3F5";
-      ctx.strokeStyle="#080896"
+      ctx.strokeStyle = "#080896"
     }
-    pintarParte(cuerpo.x,cuerpo.y);
+    pintarParte(cuerpo.x, cuerpo.y);
   }
 }
-  /* PASO 5 
-  En dibujarTodo(): 
-  • Eliminar llamadas individuales de pintarParte()  
-  • Invocar únicamente:  
-  pintarSerpiente() */
+/* PASO 5 
+En dibujarTodo(): 
+• Eliminar llamadas individuales de pintarParte()  
+• Invocar únicamente:  
+pintarSerpiente() */
 
 //EJERCICIOS DE MODIFICACIÓN
 //Modificar las coordenadas del arreglo para mostrar:
+///--- realizado en la aprte de arriba, como practica del taller.
 
+/////----------------Taller PARTE 3------------------
+
+
+//Esta función debe modificar el arreglo de posiciones de la serpiente. 
+function moverDerecha() {
+
+  //1. Obtener la posición de la cabeza actual. 
+  serpiente[0, 0]
+  //2. Crear un nuevo objeto ubicado una celda a la derecha.
+  ctx.fillStyle = "#801f6f";
+  ctx.strokeStyle = "#F5F30C"
+  for (let i = 0; i < serpiente.length; i++) {
+    if (i == 0) {
+      let derecha = { x: serpiente[0, 0].x + 1, y: serpiente[0, 0].y };
+      //3. Agregar este nuevo objeto al inicio del arreglo utilizando unshift().
+      serpiente.unshift(derecha);
+      //Luego de agregar la nueva cabeza, eliminar el último elemento del arreglo utilizando 
+      serpiente.pop();
+      limpiarCanvas();
+      dibujarTodo();
+      console.log("Derecha");
+    }
+
+  }
+
+
+}
+
+/* //Movimiento en las 4
+direcciones 
+Crear las funciones 
+• moverIzquierda()  
+• moverArriba()  
+• moverAbajo()   */
+
+function moverIzquierda() {
+
+  //1. Obtener la posición de la cabeza actual. 
+  serpiente[0, 0]
+  //2. Crear un nuevo objeto ubicado una celda a la derecha.
+  ctx.fillStyle = "#801f6f";
+  ctx.strokeStyle = "#F5F30C"
+  for (let i = 0; i < serpiente.length; i++) {
+    if (i == 0) {
+      let izquierda = { x: serpiente[0, 0].x - 1, y: serpiente[0, 0].y };
+      //3. Agregar este nuevo objeto al inicio del arreglo utilizando unshift().
+      serpiente.unshift(izquierda);
+      //Luego de agregar la nueva cabeza, eliminar el último elemento del arreglo utilizando 
+      serpiente.pop();
+      limpiarCanvas();
+      dibujarTodo();
+      console.log("izquierda");
+    }
+
+  }
+
+}
+
+function moverArriba() {
+
+  //1. Obtener la posición de la cabeza actual. 
+  serpiente[0, 0]
+  //2. Crear un nuevo objeto ubicado una celda a la derecha.
+  ctx.fillStyle = "#801f6f";
+  ctx.strokeStyle = "#F5F30C"
+  for (let i = 0; i < serpiente.length; i++) {
+    if (i == 0) {
+      let arriba = { x: serpiente[0, 0].x, y: serpiente[0, 0].y - 1 };
+      //3. Agregar este nuevo objeto al inicio del arreglo utilizando unshift().
+      serpiente.unshift(arriba);
+      //Luego de agregar la nueva cabeza, eliminar el último elemento del arreglo utilizando 
+      serpiente.pop();
+      limpiarCanvas();
+      dibujarTodo();
+
+      console.log("arriba");
+    }
+
+  }
+
+}
+
+function moverAbajo() {
+
+  //1. Obtener la posición de la cabeza actual. 
+  serpiente[0, 0]
+  //2. Crear un nuevo objeto ubicado una celda a la derecha.
+  ctx.fillStyle = "#801f6f";
+  ctx.strokeStyle = "#F5F30C"
+  for (let i = 0; i < serpiente.length; i++) {
+    if (i == 0) {
+      let abajo = { x: serpiente[0, 0].x, y: serpiente[0, 0].y + 1 };
+      //3. Agregar este nuevo objeto al inicio del arreglo utilizando unshift().
+      serpiente.unshift(abajo);
+      //Luego de agregar la nueva cabeza, eliminar el último elemento del arreglo utilizando 
+      serpiente.pop();
+      limpiarCanvas();
+      dibujarTodo();
+
+      console.log("abajo");
+    }
+
+  }
+
+}
+
+
+
+// – Cambio de dirección 
+
+function cambiarDireccion(direccion) {
+  if (direccion == "arriba") {
+
+    //dibujarTodo()
+    //moverArriba();
+    direccionActual = "arriba"
+    //pintarSerpiente();
+    moverSerpiente();
+
+  }
+  if (direccion == "derecha") {
+    //dibujarTodo()
+    //moverDerecha();
+    direccionActual = "derecha"
+    //pintarSerpiente();
+    moverSerpiente();
+  }
+  if (direccion == "izquierda") {
+    //dibujarTodo()
+    //moverIzquierda();
+    direccionActual = "izquierda"
+    //pintarSerpiente();
+    moverSerpiente();
+  }
+  if (direccion == "abajo") {
+    //dibujarTodo()
+    //moverAbajo();
+    direccionActual = "abajo"
+    //pintarSerpiente();
+    moverSerpiente();
+  }
+
+}
+
+//Movimiento automático 
+function iniciarJuego() {
+  //Esta función iniciará el movimiento automátic
+  intervaloSerpiente = clearInterval(intervaloSerpiente);
+  intervaloSerpiente = setInterval(moverSerpiente, 1000);
+  document.getElementById("btnArriba").disabled = false;
+  document.getElementById("btnIzquierda").disabled = false;
+  document.getElementById("btnDerecha").disabled = false;
+  document.getElementById("btnAbajo").disabled = false;
+}
+
+///////////
+
+function pausarJuego() {
+  //Esta función detendrá temporalmente el movimiento.
+  intervaloSerpiente = clearInterval(intervaloSerpiente);
+  console.log("PAUSA || ");
+  //botones en pasusa
+  document.getElementById("btnArriba").disabled = true;
+  document.getElementById("btnIzquierda").disabled = true;
+  document.getElementById("btnDerecha").disabled = true;
+  document.getElementById("btnAbajo").disabled = true;
+
+}
+
+////////////////
+//////////////////
+
+function moverSerpiente() {
+  console.log("moviendo");
+  let comidaAtrapada = atrapaComida();
+  if (comidaAtrapada == true) {
+    //Agregar un punto al marcador 
+    let puntaje = document.getElementById("puntaje")
+    puntos = puntos + 1
+    puntaje.textContent = puntos;
+    //Hacer crecer la serpient
+    let meLaAlargas = {};
+    serpiente.push(meLaAlargas);
+  }
+
+  if (direccionActual == "arriba") {
+
+    //dibujarTodo()
+    moverArriba();
+    pintarSerpiente();
+
+  }
+  if (direccionActual == "derecha") {
+    //dibujarTodo()
+    moverDerecha();
+    pintarSerpiente();
+  }
+  if (direccionActual == "izquierda") {
+    //dibujarTodo()
+    moverIzquierda();
+    pintarSerpiente();
+  }
+  if (direccionActual == "abajo") {
+    //dibujarTodo()
+    moverAbajo();
+    pintarSerpiente();
+  }
+}
+
+////------------------------------Comida de la serpiente 
+
+function pintarComida() {
+  
+  //1. Generar una posición aleatoria en X
+  let lineasVerticales = canvas.width / TAMANIO_CELDA;
+  console.log("Hay " + lineasVerticales + " lineas Verticales");
+  let aleatorioX = Math.floor(Math.random() * lineasVerticales) + 1;
+  console.log("Aleatorio en x: " + aleatorioX);
+
+  //2. Generar una posición aleatoria en Y 
+  let lineasHorizontales = canvas.height / TAMANIO_CELDA;
+  console.log("Hay " + lineasHorizontales + " lineas Horizontales");
+  let aleatorioY = Math.floor(Math.random() * lineasHorizontales) + 1;
+  console.log("Aleatorio en y: " + aleatorioY);
+  
+  
+  if (manzana.length === 0) {
+    //3. Dibujar la comida
+    ctx.fillStyle = "#199e6b"
+    ctx.strokeStyle = "#0a2e0d"
+    let manzanas = { x: aleatorioX, y: aleatorioY };
+    manzana.push(manzanas)
+
+    pintarParte(aleatorioX, aleatorioY);
+
+  } else {
+    let color = ["#9e1d19", "#199e6b", "#2745f5", "#f5a227"];
+    let colorBorder = ["#7aa11d", "#0a2e0d", "#1122aa", "#aa7711"];
+    manzana.splice(1, 1);
+    let apple = manzana[0]
+    //let manzanas = { x: aleatorioX, y: aleatorioY };
+    //manzana.push(manzanas)
+    //ctx.fillStyle = "#9e1d19"
+    //ctx.strokeStyle = "#7aa11d"
+
+    // manzana colores
+    let colorManzana = Math.floor(Math.random() * color.length);
+    ctx.fillStyle = color[colorManzana];
+    ctx.strokeStyle = colorBorder[colorManzana];
+
+    pintarParte(apple.x, apple.y);
+  }
+
+
+}
+
+
+
+
+//////////////////---------------Detectar colisión con la comida 
+function atrapaComida() {
+  //let cabeza = serpiente[0];
+  let apple = manzana[0]
+  if (serpiente[0].x === manzana[0].x && serpiente[0].y === manzana[0].y) {
+    manzana.splice(0,1);
+    pintarComida()
+    alert("Bien!")
+    console.log("Manzana atrapada");
+    return true;
+  } else {
+    return false;
+  }
+}
 
 
