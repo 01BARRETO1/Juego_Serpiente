@@ -195,8 +195,8 @@
       </canvas>
       <!-- Texto de fondo dentro del canvas (decorativo, visible antes de iniciar) -->
       <div class="canvas-overlay" id="canvasOverlay" aria-hidden="true">
-        <!-- <div class="canvas-overlay-icon">🐍</div> -->
-        <!-- <div class="canvas-overlay-texto">El juego aparece aquí</div> -->
+        <div class="canvas-overlay-icon">🐲</div>
+        <div class="canvas-overlay-texto">Eva ha mordido la manzana...</div>
       </div>
     </div>
 
@@ -232,7 +232,7 @@
     ============================================================ -->
     <section class="acciones" aria-label="Acciones del juego">
       <!-- El botón grande verde para empezar a jugar -->
-      <button onclick="iniciarJuego()" class="btn-iniciar" aria-label="Iniciar el juego">
+      <button id="iniciarJuego" onclick="iniciarJuego()" class="btn-iniciar" aria-label="Iniciar el juego" disabled>
         ▶ Iniciar
       </button>
       <!-- El botón azul para volver a empezar desde cero -->

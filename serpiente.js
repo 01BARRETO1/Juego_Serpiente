@@ -3,11 +3,12 @@
 const canvas = document.getElementById("canvasJuego");
 const ctx = canvas.getContext("2d");
 const TAMANIO_CELDA = 25;
-let intervaloSerpiente;
+let intervaloSerpiente=setInterval(moverSerpiente, 1000);
 let direccionActual;
 //Agregamos el arreglo manzana para guardar la nueva manzana y tener su posicion
 const manzana = [];
 let puntos = 0;
+let comidaAtrapada = true;
 
 /* 
 /////Taller serpiente parte 2/////
@@ -53,19 +54,20 @@ const serpiente = [{ x: 9, y: 9 },
 
 
 // Primera pintura del juego al cargar la página
-dibujarTodo();
+//dibujarTodo();
 
 // =========================
 // FUNCIONES DE DIBUJO
 // =========================
-
+document.getElementById("iniciarJuego").disabled = false;
 function limpiarCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 function dibujarTodo() {
-  //limpiarCanvas();
 
+  limpiarCanvas();
+  gameOver();
   dibujarTablero();
 
   /* 
@@ -87,6 +89,7 @@ function dibujarTodo() {
 
   pintarSerpiente();
   pintarComida();
+
 
 
 
@@ -383,9 +386,12 @@ function cambiarDireccion(direccion) {
 
 //Movimiento automático 
 function iniciarJuego() {
+  const overlay = document.getElementById("canvasOverlay");
+  overlay.classList.add("oculto"); // lo oculta
+  dibujarTodo()
   //Esta función iniciará el movimiento automátic
   intervaloSerpiente = clearInterval(intervaloSerpiente);
-  intervaloSerpiente = setInterval(moverSerpiente, 1000);
+  //intervaloSerpiente = setInterval(moverSerpiente, 1000);
   document.getElementById("btnArriba").disabled = false;
   document.getElementById("btnIzquierda").disabled = false;
   document.getElementById("btnDerecha").disabled = false;
@@ -410,16 +416,18 @@ function pausarJuego() {
 //////////////////
 
 function moverSerpiente() {
+  intervaloSerpiente = clearInterval(intervaloSerpiente);
+  intervaloSerpiente = setInterval(moverSerpiente, 1000);
   console.log("moviendo");
-  let comidaAtrapada = atrapaComida();
+  pintarComida();
+  comidaAtrapada = atrapaComida();
   if (comidaAtrapada == true) {
     //Agregar un punto al marcador 
     let puntaje = document.getElementById("puntaje")
     puntos = puntos + 1
     puntaje.textContent = puntos;
-    //Hacer crecer la serpient
-    let meLaAlargas = {};
-    serpiente.push(meLaAlargas);
+    crecerSerpiente();
+    pintarComida();
   }
 
   if (direccionActual == "arriba") {
@@ -450,33 +458,38 @@ function moverSerpiente() {
 
 function pintarComida() {
   
-  //1. Generar una posición aleatoria en X
-  let lineasVerticales = canvas.width / TAMANIO_CELDA;
-  console.log("Hay " + lineasVerticales + " lineas Verticales");
-  let aleatorioX = Math.floor(Math.random() * lineasVerticales) + 1;
-  console.log("Aleatorio en x: " + aleatorioX);
-
-  //2. Generar una posición aleatoria en Y 
-  let lineasHorizontales = canvas.height / TAMANIO_CELDA;
-  console.log("Hay " + lineasHorizontales + " lineas Horizontales");
-  let aleatorioY = Math.floor(Math.random() * lineasHorizontales) + 1;
-  console.log("Aleatorio en y: " + aleatorioY);
-  
-  
-  if (manzana.length === 0) {
+  if (comidaAtrapada == false && manzana.length===1) {
     //3. Dibujar la comida
-    ctx.fillStyle = "#199e6b"
-    ctx.strokeStyle = "#0a2e0d"
-    let manzanas = { x: aleatorioX, y: aleatorioY };
-    manzana.push(manzanas)
-
-    pintarParte(aleatorioX, aleatorioY);
-
-  } else {
     let color = ["#9e1d19", "#199e6b", "#2745f5", "#f5a227"];
     let colorBorder = ["#7aa11d", "#0a2e0d", "#1122aa", "#aa7711"];
-    manzana.splice(1, 1);
-    let apple = manzana[0]
+    let colorManzana = Math.floor(Math.random() * color.length);
+    ctx.fillStyle = color[colorManzana];
+    ctx.strokeStyle = colorBorder[colorManzana];
+
+    let miPrimeraManzanaDeColores=manzana[0]
+    pintarParte(miPrimeraManzanaDeColores.x, miPrimeraManzanaDeColores.y);
+    return;
+  }else if(manzana.length>0){
+    manzana.splice(0,1);
+  }else{
+    
+    //1. Generar una posición aleatoria en X
+    let lineasVerticales = canvas.width / TAMANIO_CELDA;
+    console.log("Hay " + lineasVerticales + " lineas Verticales");
+    let aleatorioX = Math.floor(Math.random() * lineasVerticales);
+    console.log("Aleatorio en x: " + aleatorioX);
+
+    //2. Generar una posición aleatoria en Y 
+    let lineasHorizontales = canvas.height / TAMANIO_CELDA;
+    console.log("Hay " + lineasHorizontales + " lineas Horizontales");
+    let aleatorioY = Math.floor(Math.random() * lineasHorizontales);
+    console.log("Aleatorio en y: " + aleatorioY);
+
+    //3. Dibujar la comida
+    let color = ["#9e1d19", "#199e6b", "#2745f5", "#f5a227"];
+    let colorBorder = ["#7aa11d", "#0a2e0d", "#1122aa", "#aa7711"];
+
+
     //let manzanas = { x: aleatorioX, y: aleatorioY };
     //manzana.push(manzanas)
     //ctx.fillStyle = "#9e1d19"
@@ -487,28 +500,140 @@ function pintarComida() {
     ctx.fillStyle = color[colorManzana];
     ctx.strokeStyle = colorBorder[colorManzana];
 
-    pintarParte(apple.x, apple.y);
-  }
-
-
-}
-
-
-
-
-//////////////////---------------Detectar colisión con la comida 
-function atrapaComida() {
-  //let cabeza = serpiente[0];
-  let apple = manzana[0]
-  if (serpiente[0].x === manzana[0].x && serpiente[0].y === manzana[0].y) {
-    manzana.splice(0,1);
-    pintarComida()
-    alert("Bien!")
-    console.log("Manzana atrapada");
-    return true;
-  } else {
-    return false;
+    pintarParte(aleatorioX, aleatorioY);
+    let manzanas = { x: aleatorioX, y: aleatorioY };
+    manzana.push(manzanas)
+    for (let i = 1; i < serpiente.length; i++) {
+      let cuerpo = serpiente[i];
+      let manzanaColores = manzana[0];
+      if (cuerpo.x === manzanaColores.x && cuerpo.y === manzanaColores.y) {
+        manzana.splice(0, 1);
+        pintarComida();
+        comidaAtrapada = false;
+      }
+    }
   }
 }
 
+
+  //////////////////---------------Detectar colisión con la comida 
+  function atrapaComida() {
+    let cabezaCabeza = serpiente[0];
+    let manzanaManzana = manzana[0];
+    if (cabezaCabeza.x === manzanaManzana.x && cabezaCabeza.y === manzanaManzana.y) {
+      comidaAtrapada=true;
+      manzana.splice(0, 1);
+      console.log("Manzana atrapada");
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function crecerSerpiente() {
+    //Hacer crecer la serpiente
+    let meLaAlargas = {};
+    serpiente.push(meLaAlargas);
+  }
+
+
+  ///////////////////////////--------------Parte 4 1. Implementar GAME OVER al tocar los gameOver 
+  function gameOver() {
+    //Si se quiere escapar de la carcel:
+    let borde = {}
+    ctx.strokeStyle = "#ff0022";
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(500, 0);
+    ctx.stroke();
+    let cabeza = serpiente[0]
+    if (cabeza.y === 20 || cabeza.x === -1 || cabeza.x === 20 || cabeza.y === -1) {
+      intervaloSerpiente = clearInterval(intervaloSerpiente)
+      pausarJuego();
+      document.getElementById("iniciarJuego").disabled = true;
+
+      // Mostrar el overlay
+      const overlay = document.getElementById("canvasOverlay");
+      overlay.classList.remove("oculto");
+      // Cambiar el mensaje y el icono
+      const icono = overlay.querySelector(".canvas-overlay-icon");
+      const texto = overlay.querySelector(".canvas-overlay-texto");
+
+      icono.textContent = "💀💀💀💀"; // cambia el emoji
+      texto.textContent = "Game Over"; // cambia el mensaje
+
+      return
+    } else {
+      //Si la cabeza choca con el cuerpo
+      for (let i = 2; i < serpiente.length; i++) {
+        let cuerpo = serpiente[i];
+        let cabeza = serpiente[0];
+        if (cabeza.x === cuerpo.x && cabeza.y === cuerpo.y) {
+          intervaloSerpiente = clearInterval(intervaloSerpiente)
+          pausarJuego();
+          document.getElementById("iniciarJuego").disabled = true;
+
+          // Mostrar el overlay
+          const overlay = document.getElementById("canvasOverlay");
+          overlay.classList.remove("oculto");
+          // Cambiar el mensaje y el icono
+          const icono = overlay.querySelector(".canvas-overlay-icon");
+          const texto = overlay.querySelector(".canvas-overlay-texto");
+
+          icono.textContent = "💀"; // cambia el emoji
+          texto.textContent = "Game Over"; // cambia el mensaje
+
+
+        }
+      }
+    }
+  }
+
+  ////////-----------------2. Implementar botón “Reiniciar juego” 
+  function reiniciarJuego() {
+    intervaloSerpiente = clearInterval(intervaloSerpiente);
+    direccionActual = "";
+    document.getElementById("btnArriba").disabled = true;
+    document.getElementById("btnIzquierda").disabled = true;
+    document.getElementById("btnDerecha").disabled = true;
+    document.getElementById("btnAbajo").disabled = true;
+
+    const overlay = document.getElementById("canvasOverlay");
+    overlay.classList.add("oculto"); // lo oculta
+    limpiarCanvas();
+
+    // Vaciar el array sin reasignar
+    serpiente.length = 0;
+    // Agregar los nuevos segmentos
+    serpiente.push(
+      { x: 9, y: 9 },
+      { x: 9, y: 10 },
+      { x: 9, y: 11 },
+      { x: 9, y: 12 }
+    );
+    let puntaje = document.getElementById("puntaje")
+    puntos = 0
+    puntaje.textContent = puntos;
+    //impiarCanvas();
+    manzana.splice(0, 1);
+    //pintarComida();
+    //pintarSerpiente();
+    //dibujarTodo();
+
+    document.getElementById("iniciarJuego").disabled = false;
+
+    // Mostrar el overlay
+    //const overlay = document.getElementById("canvasOverlay");
+    overlay.classList.remove("oculto");
+    // Cambiar el mensaje y el icono
+    const icono = overlay.querySelector(".canvas-overlay-icon");
+    const texto = overlay.querySelector(".canvas-overlay-texto");
+
+    icono.textContent = "🐉"; // cambia el emoji
+    texto.textContent = "¡Prepárate para deslizarte!"; // cambia el mensaje
+
+
+
+
+  }
 
