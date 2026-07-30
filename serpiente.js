@@ -14,6 +14,7 @@ let comidaAtrapada = false;
 //Variable para el tiempo
 let tiempo = 300;
 
+
 /////////////-- so so sonidoo
 
 // Sonidos

@@ -316,7 +316,7 @@ moverSerpiente = function () {
   moverSerpienteNivel2();
 };
 
-// Volvemos a pintar cuando cada PNG acaba de cargar.
-[cabezaNivel2, cuelloNivel2, cuerpoNivel2, colaNivel2, ...manzanasNivel2, relojImagenNivel2].forEach(imagen => {
-  imagen.onload = () => dibujarTodo();
-});
+// // Volvemos a pintar cuando cada PNG acaba de cargar.
+// [cabezaNivel2, cuelloNivel2, cuerpoNivel2, colaNivel2, ...manzanasNivel2, relojImagenNivel2].forEach(imagen => {
+//   imagen.onload = () => dibujarTodo();
+// });

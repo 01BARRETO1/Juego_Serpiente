@@ -36,6 +36,9 @@
 
 'use strict';
 
+////------------comentar debido a que ya estan c¿siendo declaradas en serpienets.js
+//'touchInicioX'
+//ESTADO_JUEGO
 /* ================================================================
    1. VARIABLES Y REFERENCIAS AL HTML
    Son como etiquetas pegadas a cada parte de la página para
@@ -78,13 +81,13 @@ const contenedorJuego = document.querySelector('.contenedor-juego');
    Como una hoja donde anotamos si el juego está encendido,
    pausado, o todavía no empezó.
 ================================================================ */
-const ESTADO_JUEGO = {
+/* const ESTADO_JUEGO = {
   iniciado: false,   // ¿Ya empezó el juego?
   pausado:  false,   // ¿Está en pausa?
   terminado: false,  // ¿Terminó el juego (game over)?
   puntaje:  0,       // Cuántos puntos tiene el jugador
 };
-
+ */
 // El tamaño de cada cuadrito de la cuadrícula del juego
 //const TAMANIO_CELDA = 25; // 500px ÷ 25 = 20 casillas × 20 casillas
 
@@ -261,6 +264,7 @@ function arrancarHojas() {
  * la lógica del juego, este dibujo se reemplaza con el juego real.
  */
 function dibujarDecoracionCanvas() {
+  
   if (!CTX || !CANVAS) return;
 
   const W = CANVAS.width;   // 500
@@ -307,7 +311,7 @@ function dibujarDecoracionCanvas() {
   CTX.fillText('— EL JARDÍN DEL EDÉN —', W / 2, H * 0.88);
   CTX.font = '12px Nunito, Arial';
   CTX.fillStyle = 'rgba(148, 163, 184, 0.3)';
-  CTX.fillText('El juego irá aquí', W / 2, H * 0.93);
+  CTX.fillText('Condenada a arrastrarse sobre su vientre', W / 2, H * 0.93);
   CTX.restore();
 }
 
@@ -376,6 +380,7 @@ function dibujarSerpienteDecoNeon(ctx, W, H) {
  */
 let frameDecoracion = 0;
 function animarDecoracion() {
+  
   // Solo animamos cuando el juego no ha empezado
   if (ESTADO_JUEGO.iniciado) return;
   if (!CTX) return;
@@ -407,7 +412,8 @@ function animarDecoracion() {
  * - Colocar la primera manzana en posición aleatoria
  * - Arrancar el loop del juego con setInterval o requestAnimationFrame
  */
-function iniciarJuego() {
+function iniciarJuegoAnimaciones() {
+  
   if (ESTADO_JUEGO.iniciado && !ESTADO_JUEGO.pausado) return;
 
   ESTADO_JUEGO.iniciado  = true;
@@ -428,6 +434,7 @@ function iniciarJuego() {
   if (CTX) CTX.clearRect(0, 0, CANVAS.width, CANVAS.height);
 
   console.log('🐍 iniciarJuego() — Listo para recibir la lógica del juego.');
+  iniciarJuego();
   // ↑ Cuando agregues la lógica, ponla después de esta línea.
 }
 
@@ -439,7 +446,7 @@ function iniciarJuego() {
  * - Si hay un intervalo/loop del juego, detenerlo aquí al pausar
  * - Y reanudarlo cuando se despause
  */
-function pausarJuego() {
+function pausarJuegoAnimaciones() {
   if (!ESTADO_JUEGO.iniciado || ESTADO_JUEGO.terminado) return;
 
   ESTADO_JUEGO.pausado = !ESTADO_JUEGO.pausado; // Alternamos
@@ -459,6 +466,7 @@ function pausarJuego() {
     fijarMensaje();
     if (elMensaje) elMensaje.textContent = '¡De vuelta al jardín!';
     console.log('▶️ reanudarJuego() — Juego reanudado.');
+    pausarJuego();
     // TODO: Reanudar el loop del juego aquí.
   }
 }
@@ -473,7 +481,7 @@ function pausarJuego() {
  * - Borrar la comida del canvas
  * - Volver a arrancar desde cero
  */
-function reiniciarJuego() {
+function reiniciarJuegoAnimaciones() {
   // Detenemos todo
   ESTADO_JUEGO.iniciado  = false;
   ESTADO_JUEGO.pausado   = false;
@@ -495,6 +503,7 @@ function reiniciarJuego() {
 
   console.log('↺ reiniciarJuego() — Todo reiniciado.');
   // TODO: Agrega aquí la limpieza de la lógica del juego.
+  reiniciarJuego()
 }
 
 /**
@@ -513,6 +522,7 @@ function finJuego(puntajeFinal) {
   cambiarMensaje(`¡La serpiente mordió su cola! Puntaje: ${puntajeFinal}`);
 
   console.log(`💀 finJuego() — Game Over. Puntaje: ${puntajeFinal}`);
+  gameOver();
 }
 
 /**
@@ -524,17 +534,7 @@ function finJuego(puntajeFinal) {
  * - No permitas que la serpiente vaya en dirección opuesta
  *   (si va a la derecha, no puede girar de golpe a la izquierda)
  */
-function cambiarDireccion(direccion) {
-  if (!ESTADO_JUEGO.iniciado || ESTADO_JUEGO.pausado || ESTADO_JUEGO.terminado) return;
 
-  console.log(`🎮 cambiarDireccion('${direccion}')`);
-  // TODO: Implementa el cambio de dirección de la serpiente aquí.
-  // Ejemplo:
-  // const opuestos = { arriba: 'abajo', abajo: 'arriba', izquierda: 'derecha', derecha: 'izquierda' };
-  // if (direccion !== opuestos[serpiente.direccionActual]) {
-  //   serpiente.nuevaDireccion = direccion;
-  // }
-}
 
 
 /* ================================================================
@@ -565,94 +565,6 @@ function actualizarPuntaje(nuevoPuntaje) {
 }
 
 
-/* ================================================================
-   6. CONTROLES DE TECLADO Y TÁCTILES
-   Para que el jugador pueda usar el teclado en computadora
-   o deslizar el dedo en el celular.
-================================================================ */
-
-/**
- * Escuchamos las teclas del teclado.
- * Las flechas (⬆️⬇️⬅️➡️) y WASD también mueven la serpiente.
- */
-document.addEventListener('keydown', (e) => {
-  // Mapa de teclas a direcciones
-  const mapa = {
-    'ArrowUp':    'arriba',
-    'ArrowDown':  'abajo',
-    'ArrowLeft':  'izquierda',
-    'ArrowRight': 'derecha',
-    'w': 'arriba', 'W': 'arriba',
-    's': 'abajo',  'S': 'abajo',
-    'a': 'izquierda', 'A': 'izquierda',
-    'd': 'derecha',   'D': 'derecha',
-  };
-
-  if (mapa[e.key]) {
-    // Evitamos que la página haga scroll al presionar las flechas
-    e.preventDefault();
-    cambiarDireccion(mapa[e.key]);
-    return;
-  }
-
-  // La tecla Espacio también pausa/reanuda
-  if (e.key === ' ' || e.key === 'Escape') {
-    e.preventDefault();
-    if (ESTADO_JUEGO.iniciado) pausarJuego();
-  }
-
-  // Enter inicia el juego
-  if (e.key === 'Enter') {
-    if (!ESTADO_JUEGO.iniciado) iniciarJuego();
-  }
-});
-
-
-/* ================================================================
-   CONTROLES TÁCTILES (swipe / deslizar)
-   En celulares, el jugador puede deslizar el dedo para moverse.
-   Es como barrer la pantalla con el dedo.
-================================================================ */
-let touchInicioX = 0; // Dónde empezó el toque
-let touchInicioY = 0;
-let touchActivo  = false;
-
-// Guardamos dónde empezó el toque
-document.addEventListener('touchstart', (e) => {
-  // Solo si el toque es en el área de juego (canvas o controles)
-  const objetivo = e.target;
-  if (objetivo.tagName === 'BUTTON') return; // Los botones se manejan solos
-
-  touchInicioX = e.touches[0].clientX;
-  touchInicioY = e.touches[0].clientY;
-  touchActivo  = true;
-}, { passive: true });
-
-// Cuando levanta el dedo, calculamos la dirección del swipe
-document.addEventListener('touchend', (e) => {
-  if (!touchActivo) return;
-  touchActivo = false;
-
-  const objetivo = e.target;
-  if (objetivo.tagName === 'BUTTON') return;
-
-  const deltaX = e.changedTouches[0].clientX - touchInicioX;
-  const deltaY = e.changedTouches[0].clientY - touchInicioY;
-
-  // El swipe debe ser de al menos 30px para registrarse
-  const MINIMO_SWIPE = 30;
-
-  if (Math.abs(deltaX) < MINIMO_SWIPE && Math.abs(deltaY) < MINIMO_SWIPE) return;
-
-  // ¿Fue más horizontal o más vertical?
-  if (Math.abs(deltaX) > Math.abs(deltaY)) {
-    // Swipe horizontal
-    cambiarDireccion(deltaX > 0 ? 'derecha' : 'izquierda');
-  } else {
-    // Swipe vertical
-    cambiarDireccion(deltaY > 0 ? 'abajo' : 'arriba');
-  }
-}, { passive: true });
 
 
 /* ================================================================
@@ -791,6 +703,8 @@ function inicializarGifs() {
  * Arranca todas las animaciones, efectos y escuchadores.
  */
 function arrancarAplicacion() {
+  dibujarDecoracionCanvas();
+  
   console.log('🌿 Neon Slither: El Despertar Algorítmico — Iniciando…');
 
   // 1. Empezamos a escribir el mensaje inicial letra por letra
@@ -800,7 +714,7 @@ function arrancarAplicacion() {
   arrancarHojas();
 
   // 3. Dibujamos la decoración inicial en el canvas
-  dibujarDecoracionCanvas();
+  
 
   // 4. Arrancamos la animación suave del canvas decorativo
   animarDecoracion();
