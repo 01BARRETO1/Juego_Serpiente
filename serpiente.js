@@ -3,14 +3,32 @@
 const canvas = document.getElementById("canvasJuego");
 const ctx = canvas.getContext("2d");
 const TAMANIO_CELDA = 25;
-let intervaloSerpiente=setInterval(moverSerpiente, 1000);
-let direccionActual;
+//Enter inicio de juego
+document.addEventListener("keydown", listenerTeclado);
+let intervaloSerpiente;/* setInterval(moverSerpiente, 1000); */
+let direccionActual = null;
 //Agregamos el arreglo manzana para guardar la nueva manzana y tener su posicion
 const manzana = [];
 let puntos = 0;
-let comidaAtrapada = true;
+let comidaAtrapada = false;
+//Variable para el tiempo
+let tiempo = 300;
 
-/* 
+/////////////-- so so sonidoo
+
+// Sonidos
+const sonidoInicio = new Audio("sounds/inicio.mp3");
+const sonidoPausa = new Audio("sounds/pausa.mp3");
+const sonidoJuego = new Audio("sounds/juego.mp3");
+const sonidoManzana = new Audio("sounds/manzana.mp3");
+const sonidoChoqueCuerpo = new Audio("sounds/choque_cuerpo.mp3");
+const sonidoChoquePared = new Audio("sounds/choque_pared.mp3");
+const sonidoVozGameOver = new Audio("sounds/voz.mp4");
+
+// música de fondo en loop
+sonidoJuego.loop = true;
+
+/*  
 /////Taller serpiente parte 2/////
 //CREACIÓN DE LA SERPIENTE
 //PASO 1 .- Crear un arreglo:
@@ -89,7 +107,7 @@ function dibujarTodo() {
 
   pintarSerpiente();
   pintarComida();
-
+  
 
 
 
@@ -351,51 +369,63 @@ function moverAbajo() {
 // – Cambio de dirección 
 
 function cambiarDireccion(direccion) {
-  if (direccion == "arriba") {
+  // Diccionario de direcciones opuestas
+  // Sirve para evitar que la serpiente se mueva inmediatamente hacia atrás
+  // Objeto que define qué dirección es opuesta a cuál
+  const opuestos = {
+    arriba: "abajo",
+    abajo: "arriba",
+    izquierda: "derecha",
+    derecha: "izquierda"
+  };
 
-    //dibujarTodo()
-    //moverArriba();
-    direccionActual = "arriba"
-    //pintarSerpiente();
-    moverSerpiente();
-
+  // Verificamos que la nueva dirección NO sea la opuesta a la actual
+  // Ejemplo: si va "arriba", no puede cambiar directamente a "abajo"
+  // Si la nueva dirección NO es la opuesta a la actual,
+  // entonces sí permitimos el cambio
+  if (opuestos[direccion] !== direccionActual) {
+    // Si la dirección es válida, actualizamos la dirección actual
+    direccionActual = direccion; // actualizamos la dirección global
   }
-  if (direccion == "derecha") {
-    //dibujarTodo()
-    //moverDerecha();
-    direccionActual = "derecha"
-    //pintarSerpiente();
-    moverSerpiente();
-  }
-  if (direccion == "izquierda") {
-    //dibujarTodo()
-    //moverIzquierda();
-    direccionActual = "izquierda"
-    //pintarSerpiente();
-    moverSerpiente();
-  }
-  if (direccion == "abajo") {
-    //dibujarTodo()
-    //moverAbajo();
-    direccionActual = "abajo"
-    //pintarSerpiente();
-    moverSerpiente();
-  }
-
 }
+
+
+
+
 
 //Movimiento automático 
 function iniciarJuego() {
+
+  // Activar controles de teclado y touch
+  document.addEventListener("keydown", listenerTeclado);
+  document.addEventListener("touchstart", listenerTouchStart, { passive: true });
+  document.addEventListener("touchend", listenerTouchEnd, { passive: true });
+
+  ESTADO_JUEGO.iniciado = true;
+  ESTADO_JUEGO.pausado = false;
+  ESTADO_JUEGO.terminado = false;
   const overlay = document.getElementById("canvasOverlay");
   overlay.classList.add("oculto"); // lo oculta
+  let estado = document.getElementById("estado");
+  estado.innerHTML = "GAME"
   dibujarTodo()
+
   //Esta función iniciará el movimiento automátic
   intervaloSerpiente = clearInterval(intervaloSerpiente);
-  //intervaloSerpiente = setInterval(moverSerpiente, 1000);
+  intervaloSerpiente = setInterval(moverSerpiente, tiempo);
+  //------- Para integrar el teclado
+
   document.getElementById("btnArriba").disabled = false;
   document.getElementById("btnIzquierda").disabled = false;
   document.getElementById("btnDerecha").disabled = false;
   document.getElementById("btnAbajo").disabled = false;
+  document.getElementById("pausa").disabled = false;
+
+  ///----Sonido
+  sonidoInicio.play();
+  sonidoJuego.play(); // música de fondo
+
+
 }
 
 ///////////
@@ -403,12 +433,23 @@ function iniciarJuego() {
 function pausarJuego() {
   //Esta función detendrá temporalmente el movimiento.
   intervaloSerpiente = clearInterval(intervaloSerpiente);
+  intervaloSerpiente = null;
+
+  ///// integrar controles del teclado
+  ESTADO_JUEGO.pausado = true;
   console.log("PAUSA || ");
   //botones en pasusa
   document.getElementById("btnArriba").disabled = true;
   document.getElementById("btnIzquierda").disabled = true;
   document.getElementById("btnDerecha").disabled = true;
   document.getElementById("btnAbajo").disabled = true;
+  //Cambiar el estado del juego arriba en el tablero que diga pausa
+  let estado = document.getElementById("estado");
+  estado.innerHTML = "PAUSA"
+
+  //Sonido
+  sonidoPausa.play();
+  sonidoJuego.pause(); // pausa la música de fondo
 
 }
 
@@ -416,8 +457,7 @@ function pausarJuego() {
 //////////////////
 
 function moverSerpiente() {
-  intervaloSerpiente = clearInterval(intervaloSerpiente);
-  intervaloSerpiente = setInterval(moverSerpiente, 1000);
+
   console.log("moviendo");
   pintarComida();
   comidaAtrapada = atrapaComida();
@@ -426,6 +466,7 @@ function moverSerpiente() {
     let puntaje = document.getElementById("puntaje")
     puntos = puntos + 1
     puntaje.textContent = puntos;
+    
     crecerSerpiente();
     pintarComida();
   }
@@ -457,8 +498,8 @@ function moverSerpiente() {
 ////------------------------------Comida de la serpiente 
 
 function pintarComida() {
-  
-  if (comidaAtrapada == false && manzana.length===1) {
+
+  if (comidaAtrapada == false && manzana.length === 1) {
     //3. Dibujar la comida
     let color = ["#9e1d19", "#199e6b", "#2745f5", "#f5a227"];
     let colorBorder = ["#7aa11d", "#0a2e0d", "#1122aa", "#aa7711"];
@@ -466,13 +507,13 @@ function pintarComida() {
     ctx.fillStyle = color[colorManzana];
     ctx.strokeStyle = colorBorder[colorManzana];
 
-    let miPrimeraManzanaDeColores=manzana[0]
+    let miPrimeraManzanaDeColores = manzana[0]
     pintarParte(miPrimeraManzanaDeColores.x, miPrimeraManzanaDeColores.y);
     return;
-  }else if(manzana.length>0){
-    manzana.splice(0,1);
-  }else{
-    
+  } else if (manzana.length > 0) {
+    manzana.splice(0, 1);
+  } else {
+
     //1. Generar una posición aleatoria en X
     let lineasVerticales = canvas.width / TAMANIO_CELDA;
     console.log("Hay " + lineasVerticales + " lineas Verticales");
@@ -516,124 +557,364 @@ function pintarComida() {
 }
 
 
-  //////////////////---------------Detectar colisión con la comida 
-  function atrapaComida() {
-    let cabezaCabeza = serpiente[0];
-    let manzanaManzana = manzana[0];
-    if (cabezaCabeza.x === manzanaManzana.x && cabezaCabeza.y === manzanaManzana.y) {
-      comidaAtrapada=true;
-      manzana.splice(0, 1);
-      console.log("Manzana atrapada");
-      return true;
-    } else {
-      return false;
+//////////////////---------------Detectar colisión con la comida 
+function atrapaComida() {
+  let cabezaCabeza = serpiente[0];
+  let manzanaManzana = manzana[0];
+  if (cabezaCabeza.x === manzanaManzana.x && cabezaCabeza.y === manzanaManzana.y) {
+    //SSsonido
+    sonidoManzana.play();
+    //
+    comidaAtrapada = true;
+    //Aumentamos tiempo
+    tiempo = tiempo - 12;
+    // Reiniciar intervalo con nueva velocidad
+    clearInterval(intervaloSerpiente);
+    intervaloSerpiente = setInterval(moverSerpiente, tiempo);
+    
+    //Para que el juego sea jugable:
+    // límite mínimo de velocidad
+    if (tiempo < 60) tiempo = 60;
+    clearInterval(intervaloSerpiente);
+    intervaloSerpiente = setInterval(moverSerpiente, tiempo);
+
+    if (tiempo === 48 || puntaje === 20) {
+      tiempo = 60
+      clearInterval(intervaloSerpiente);
+      intervaloSerpiente = setInterval(moverSerpiente, tiempo);
     }
+
+    manzana.splice(0, 1);
+    console.log("Manzana atrapada");
+    return true;
+  } else {
+    return false;
   }
+}
 
-  function crecerSerpiente() {
-    //Hacer crecer la serpiente
-    let meLaAlargas = {};
-    serpiente.push(meLaAlargas);
-  }
+function crecerSerpiente() {
+  //Hacer crecer la serpiente
+  let meLaAlargas = {};
+  serpiente.push(meLaAlargas);
+}
 
 
-  ///////////////////////////--------------Parte 4 1. Implementar GAME OVER al tocar los gameOver 
-  function gameOver() {
-    //Si se quiere escapar de la carcel:
+///////////////////////////--------------Parte 4 1. Implementar GAME OVER al tocar los gameOver 
+function gameOver() {
+  //Si se quiere escapar de la carcel:
+
+  let cabeza = serpiente[0]
+  if (cabeza.y === 20 || cabeza.x === -1 || cabeza.x === 20 || cabeza.y === -1) {
+    //Se rompe la cabeza
+    sonidoChoquePared.play();
+    sonidoJuego.pause();
+    //
+    intervaloSerpiente = clearInterval(intervaloSerpiente);
+    ESTADO_JUEGO.terminado = true;
+    ESTADO_JUEGO.iniciado = false; // 🔑 importante
+    ESTADO_JUEGO.pausado = false;
     let borde = {}
     ctx.strokeStyle = "#ff0022";
     ctx.beginPath();
     ctx.moveTo(0, 0);
     ctx.lineTo(500, 0);
     ctx.stroke();
-    let cabeza = serpiente[0]
-    if (cabeza.y === 20 || cabeza.x === -1 || cabeza.x === 20 || cabeza.y === -1) {
-      intervaloSerpiente = clearInterval(intervaloSerpiente)
-      pausarJuego();
-      document.getElementById("iniciarJuego").disabled = true;
+    ctx.beginPath();
+    ctx.moveTo(500, 500);
+    ctx.lineTo(0, 500);
+    ctx.stroke();
 
-      // Mostrar el overlay
-      const overlay = document.getElementById("canvasOverlay");
-      overlay.classList.remove("oculto");
-      // Cambiar el mensaje y el icono
-      const icono = overlay.querySelector(".canvas-overlay-icon");
-      const texto = overlay.querySelector(".canvas-overlay-texto");
-
-      icono.textContent = "💀💀💀💀"; // cambia el emoji
-      texto.textContent = "Game Over"; // cambia el mensaje
-
-      return
-    } else {
-      //Si la cabeza choca con el cuerpo
-      for (let i = 2; i < serpiente.length; i++) {
-        let cuerpo = serpiente[i];
-        let cabeza = serpiente[0];
-        if (cabeza.x === cuerpo.x && cabeza.y === cuerpo.y) {
-          intervaloSerpiente = clearInterval(intervaloSerpiente)
-          pausarJuego();
-          document.getElementById("iniciarJuego").disabled = true;
-
-          // Mostrar el overlay
-          const overlay = document.getElementById("canvasOverlay");
-          overlay.classList.remove("oculto");
-          // Cambiar el mensaje y el icono
-          const icono = overlay.querySelector(".canvas-overlay-icon");
-          const texto = overlay.querySelector(".canvas-overlay-texto");
-
-          icono.textContent = "💀"; // cambia el emoji
-          texto.textContent = "Game Over"; // cambia el mensaje
-
-
-        }
-      }
-    }
-  }
-
-  ////////-----------------2. Implementar botón “Reiniciar juego” 
-  function reiniciarJuego() {
-    intervaloSerpiente = clearInterval(intervaloSerpiente);
-    direccionActual = "";
-    document.getElementById("btnArriba").disabled = true;
-    document.getElementById("btnIzquierda").disabled = true;
-    document.getElementById("btnDerecha").disabled = true;
-    document.getElementById("btnAbajo").disabled = true;
-
-    const overlay = document.getElementById("canvasOverlay");
-    overlay.classList.add("oculto"); // lo oculta
-    limpiarCanvas();
-
-    // Vaciar el array sin reasignar
-    serpiente.length = 0;
-    // Agregar los nuevos segmentos
-    serpiente.push(
-      { x: 9, y: 9 },
-      { x: 9, y: 10 },
-      { x: 9, y: 11 },
-      { x: 9, y: 12 }
-    );
-    let puntaje = document.getElementById("puntaje")
-    puntos = 0
-    puntaje.textContent = puntos;
-    //impiarCanvas();
-    manzana.splice(0, 1);
-    //pintarComida();
-    //pintarSerpiente();
-    //dibujarTodo();
-
-    document.getElementById("iniciarJuego").disabled = false;
+    pausarJuego();
+    document.getElementById("iniciarJuego").disabled = true;
+    document.getElementById("pausa").disabled = true;
 
     // Mostrar el overlay
-    //const overlay = document.getElementById("canvasOverlay");
+    const overlay = document.getElementById("canvasOverlay");
     overlay.classList.remove("oculto");
     // Cambiar el mensaje y el icono
     const icono = overlay.querySelector(".canvas-overlay-icon");
     const texto = overlay.querySelector(".canvas-overlay-texto");
 
-    icono.textContent = "🐉"; // cambia el emoji
-    texto.textContent = "¡Prepárate para deslizarte!"; // cambia el mensaje
+    icono.innerHTML = '<img src="img/huesos.png" class="calavera3d">';
+    texto.textContent = "Game Over"; // cambia el mensaje
+
+    let estado = document.getElementById("estado");
+    estado.innerHTML = '<img src="img/calavera.png" class="calavera3d">';
+
+    // Deshabilitar botones
+    document.getElementById("btnArriba").disabled = true;
+    document.getElementById("btnIzquierda").disabled = true;
+    document.getElementById("btnDerecha").disabled = true;
+    document.getElementById("btnAbajo").disabled = true;
+
+    // Quitar teclado y touch
+    document.removeEventListener("keydown", listenerTeclado);
+    document.removeEventListener("touchstart", listenerTouchStart);
+    document.removeEventListener("touchend", listenerTouchEnd)
+
+    console.log("Juego terminado, controles táctiles desactivados.");
+
+    // Activar solo Escape
+    document.addEventListener("keydown", listenerEscape);
+    console.log("Game Over: solo Escape está activo.");
+
+    // Reproducir voz .ogg
+    sonidoVozGameOver.currentTime = 0; // reinicia desde el inicio
+    sonidoVozGameOver.play();
 
 
+    return
+  } else {
+    //Si la cabeza choca con el cuerpo
+    for (let i = 2; i < serpiente.length; i++) {
+      let cuerpo = serpiente[i];
+      let cabeza = serpiente[0];
+      if (cabeza.x === cuerpo.x && cabeza.y === cuerpo.y) {
+        //Puñetazo
+        sonidoChoqueCuerpo.play();
+        sonidoJuego.pause();
+        intervaloSerpiente = clearInterval(intervaloSerpiente)
+        ESTADO_JUEGO.terminado = true;
+        ESTADO_JUEGO.iniciado = false; // 🔑 importante
+        ESTADO_JUEGO.pausado = false;
+        pausarJuego();
+        document.getElementById("iniciarJuego").disabled = true;
+        document.getElementById("pausa").disabled = true;
+
+        // Mostrar el overlay
+        const overlay = document.getElementById("canvasOverlay");
+        overlay.classList.remove("oculto");
+        // Cambiar el mensaje y el icono
+        const icono = overlay.querySelector(".canvas-overlay-icon");
+        const texto = overlay.querySelector(".canvas-overlay-texto");
+
+        icono.textContent = "💀"; // cambia el emoji
+        texto.textContent = "Game Over"; // cambia el mensaje
+
+        let estado = document.getElementById("estado");
+        estado.innerHTML = "💀"
+
+        // Deshabilitar botones
+        document.getElementById("btnArriba").disabled = true;
+        document.getElementById("btnIzquierda").disabled = true;
+        document.getElementById("btnDerecha").disabled = true;
+        document.getElementById("btnAbajo").disabled = true;
+
+        // Quitar teclado y touch
+        document.removeEventListener("keydown", listenerTeclado);
+        document.removeEventListener("touchstart", listenerTouchStart);
+        document.removeEventListener("touchend", listenerTouchEnd)
+        // Activar solo Escape
+        document.addEventListener("keydown", listenerEscape);
+        console.log("Game Over: solo Escape está activo.");
+
+        // Reproducir voz .ogg
+    sonidoVozGameOver.currentTime = 0; // reinicia desde el inicio
+    sonidoVozGameOver.play();
 
 
+      }
+    }
   }
+}
+
+////////-----------------2. Implementar botón “Reiniciar juego” 
+function reiniciarJuego() {
+  intervaloSerpiente = clearInterval(intervaloSerpiente);
+  tiempo = 300
+  // Reiniciar intervalo con nueva velocidad
+  intervaloSerpiente = clearInterval(intervaloSerpiente);
+  // Resetear estado
+  ESTADO_JUEGO.iniciado = false;
+  ESTADO_JUEGO.pausado = false;
+  ESTADO_JUEGO.terminado = false;
+  ESTADO_JUEGO.puntaje = 0;
+  //intervaloSerpiente = setInterval(moverSerpiente, tiempo);
+  direccionActual = null;
+  document.getElementById("btnArriba").disabled = true;
+  document.getElementById("btnIzquierda").disabled = true;
+  document.getElementById("btnDerecha").disabled = true;
+  document.getElementById("btnAbajo").disabled = true;
+  document.getElementById("pausa").disabled = true;
+
+  const overlay = document.getElementById("canvasOverlay");
+  overlay.classList.add("oculto"); // lo oculta
+  limpiarCanvas();
+
+  // Vaciar el array sin reasignar
+  serpiente.length = 0;
+  // Agregar los nuevos segmentos
+  serpiente.push(
+    { x: 9, y: 9 },
+    { x: 9, y: 10 },
+    { x: 9, y: 11 },
+    { x: 9, y: 12 }
+  );
+  let puntaje = document.getElementById("puntaje")
+  puntos = 0
+  puntaje.textContent = puntos;
+  //impiarCanvas();
+  ///Reiniciar manzana
+  manzana.splice(0, manzana.length);
+  //pintarComida();
+  //pintarSerpiente();
+  //dibujarTodo();
+
+  document.getElementById("iniciarJuego").disabled = false;
+
+  // Mostrar el overlay
+  //const overlay = document.getElementById("canvasOverlay");
+  overlay.classList.remove("oculto");
+  // Cambiar el mensaje y el icono
+  const icono = overlay.querySelector(".canvas-overlay-icon");
+  const texto = overlay.querySelector(".canvas-overlay-texto");
+
+  icono.textContent = "🐉"; // cambia el emoji
+  texto.textContent = "¡Prepárate para deslizarte!"; // cambia el mensaje
+
+  let estado = document.getElementById("estado");
+  estado.innerHTML = "RESET"
+
+  //enter
+  document.addEventListener("keydown", listenerTeclado);
+
+
+}
+
+////////////////CONTROLES///////////////
+
+/* ================================================================
+   ESTADO GLOBAL DEL JUEGO
+   Como una hoja donde anotamos si el juego está encendido,
+   pausado, o todavía no empezó.
+================================================================ */
+const ESTADO_JUEGO = {
+  iniciado: false,   // ¿Ya empezó el juego?
+  pausado: false,   // ¿Está en pausa?
+  terminado: false,  // ¿Terminó el juego (game over)?
+  puntaje: 0,       // Cuántos puntos tiene el jugador
+};
+
+/* ================================================================
+   6. CONTROLES DE TECLADO Y TÁCTILES
+   Para que el jugador pueda usar el teclado en computadora
+   o deslizar el dedo en el celular.
+================================================================ */
+
+/**
+ * Escuchamos las teclas del teclado.
+ * Las flechas (⬆️⬇️⬅️➡️) y WASD también mueven la serpiente.
+ */
+
+function listenerEscape(e) {
+  if (e.key === "Escape") {
+    e.preventDefault();
+    // Quitamos este listener para no duplicar
+    document.removeEventListener("keydown", listenerEscape);
+    // Reiniciamos el juego
+    reiniciarJuego();
+  }
+}
+
+
+function listenerTeclado(e) {
+  // Mapa de teclas a direcciones
+  const mapa = {
+    'ArrowUp': 'arriba',
+    'ArrowDown': 'abajo',
+    'ArrowLeft': 'izquierda',
+    'ArrowRight': 'derecha',
+    'w': 'arriba', 'W': 'arriba',
+    's': 'abajo', 'S': 'abajo',
+    'a': 'izquierda', 'A': 'izquierda',
+    'd': 'derecha', 'D': 'derecha',
+  };
+
+  if (mapa[e.key]) {
+    // Evitamos que la página haga scroll al presionar las flechas
+    e.preventDefault();
+    cambiarDireccion(mapa[e.key]);
+    return;
+  }
+
+  // La tecla Espacio también pausa/reanuda
+  if (e.key === ' ') {
+    // Barra espaciadora → pausa/reanuda
+    e.preventDefault();
+    if (ESTADO_JUEGO.iniciado && !ESTADO_JUEGO.pausado) {
+      pausarJuego();
+    } else if (ESTADO_JUEGO.iniciado && ESTADO_JUEGO.pausado) {
+      iniciarJuego(); // mejor que iniciarJuego()
+    }
+  }
+
+  if (e.key === 'Escape') {
+    // Escape → reinicia el juego
+    e.preventDefault();
+    reiniciarJuego();
+  }
+
+  // Enter → iniciar juego
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    if (!ESTADO_JUEGO.iniciado) {
+      iniciarJuego();
+    }
+  }
+}
+
+/* ================================================================
+   CONTROLES TÁCTILES (swipe / deslizar)
+   En celulares, el jugador puede deslizar el dedo para moverse.
+   Es como barrer la pantalla con el dedo.
+================================================================ */
+let touchInicioX = 0; // Dónde empezó el toque
+let touchInicioY = 0;
+let touchActivo = false;
+
+// Guardamos dónde empezó el toque
+function listenerTouchStart(e) {
+  // Solo si el toque es en el área de juego (canvas o controles)
+  const objetivo = e.target;
+  if (objetivo.tagName === 'BUTTON') return; // Los botones se manejan solos
+
+  touchInicioX = e.touches[0].clientX;
+  touchInicioY = e.touches[0].clientY;
+  touchActivo = true;
+}
+
+// Cuando levanta el dedo, calculamos la dirección del swipe
+function listenerTouchEnd(e) {
+  if (!touchActivo) return;
+  touchActivo = false;
+
+  const objetivo = e.target;
+  if (objetivo.tagName === 'BUTTON') return;
+
+  const deltaX = e.changedTouches[0].clientX - touchInicioX;
+  const deltaY = e.changedTouches[0].clientY - touchInicioY;
+
+  // El swipe debe ser de al menos 30px para registrarse
+  const MINIMO_SWIPE = 30;
+
+  if (Math.abs(deltaX) < MINIMO_SWIPE && Math.abs(deltaY) < MINIMO_SWIPE) return;
+
+  // ¿Fue más horizontal o más vertical?
+  if (Math.abs(deltaX) > Math.abs(deltaY)) {
+    // Swipe horizontal
+    cambiarDireccion(deltaX > 0 ? 'derecha' : 'izquierda');
+  } else {
+    // Swipe vertical
+    cambiarDireccion(deltaY > 0 ? 'abajo' : 'arriba');
+  }
+}
+
+
+
+
+
+
+
+
+
 

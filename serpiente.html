@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <!-- Le decimos al navegador que use caracteres especiales, como letras con acento -->
   <meta charset="UTF-8" />
@@ -9,11 +10,14 @@
 
   <!-- Traemos dos fuentes bonitas de Google: una elegante y una futurista -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Nunito:wght@400;600;700&display=swap"
+    rel="stylesheet">
 
   <!-- Aquí cargamos todos los colores y estilos bonitos de la página -->
   <link rel="stylesheet" href="serpiente.css">
 </head>
+
 <body>
 
   <!-- ============================================================
@@ -73,9 +77,10 @@
                                 class="gif-arbol" loading="lazy">
         -->
         <div>
-          <img src="assets/arbol.gif" alt="Árbol del conocimiento" class="gif-arbol" loading="lazy" width="280px" height="420px">
+          <img src="assets/arbol.gif" alt="Árbol del conocimiento" class="gif-arbol" loading="lazy" width="280px"
+            height="420px">
 
-          
+
         </div>
       </div><!-- fin lado-arbol -->
 
@@ -111,10 +116,11 @@
           y reemplaza con: <img src="eva.gif" alt="Eva en el jardín del Edén"
                                 class="gif-eva" loading="lazy">
         -->
-        <div >
-          <img src="assets/eva.gif" alt="Eva en el jardín del Edén" class="gif-eva" loading="lazy" width="200px" height="380px">
-          
-          
+        <div>
+          <img src="assets/eva.gif" alt="Eva en el jardín del Edén" class="gif-eva" loading="lazy" width="200px"
+            height="380px">
+
+
         </div>
       </div><!-- fin lado-eva -->
 
@@ -158,6 +164,7 @@
         <!-- El número grande y 3D como un globo flotante -->
         <strong id="puntaje" class="numero-3d">0</strong>
       </div>
+      </div>
       <!-- La tarjeta del estado, dice si el juego está listo, jugando o pausado -->
       <div class="tarjeta-info">
         <span>Estado</span>
@@ -190,8 +197,7 @@
       <!-- La luz de neón que rodea el canvas -->
       <div class="canvas-glow" aria-hidden="true"></div>
       <!-- El canvas real — aquí irá la lógica del juego más adelante; por ahora solo es el marco decorativo -->
-      <canvas id="canvasJuego" width="500" height="500"
-              role="img" aria-label="Tablero del juego de la serpiente">
+      <canvas id="canvasJuego" width="500" height="500" role="img" aria-label="Tablero del juego de la serpiente">
       </canvas>
       <!-- Texto de fondo dentro del canvas (decorativo, visible antes de iniciar) -->
       <div class="canvas-overlay" id="canvasOverlay" aria-hidden="true">
@@ -213,16 +219,21 @@
     <section class="controles" aria-label="Controles de dirección">
       <!-- Las celdas vacías ayudan a que los botones queden en la posición correcta -->
       <button class="vacio" tabindex="-1" aria-hidden="true">-</button>
-      <button id="btnArriba" onclick="cambiarDireccion('arriba')" aria-label="Mover arriba" class="btn-direccion" disabled>⬆️</button>
+      <button id="btnArriba" onclick="cambiarDireccion('arriba')" aria-label="Mover arriba" class="btn-direccion"
+        disabled>⬆️</button>
       <button class="vacio" tabindex="-1" aria-hidden="true">-</button>
 
-      <button id="btnIzquierda"  onclick="cambiarDireccion('izquierda')" aria-label="Mover a la izquierda" class="btn-direccion" disabled>⬅️</button>
+      <button id="btnIzquierda" onclick="cambiarDireccion('izquierda')" aria-label="Mover a la izquierda"
+        class="btn-direccion" disabled>⬅️</button>
       <!-- El botón de pausa está en el centro, como el corazón del control -->
-      <button onclick="pausarJuego()" aria-label="Pausar o reanudar el juego" class="btn-pausa">⏸️</button>
-      <button id="btnDerecha"  onclick="cambiarDireccion('derecha')" aria-label="Mover a la derecha" class="btn-direccion" disabled>➡️</button>
+      <button id="pausa" onclick="pausarJuego()" aria-label="Pausar o reanudar el juego" class="btn-pausa"
+        disabled>⏸️</button>
+      <button id="btnDerecha" onclick="cambiarDireccion('derecha')" aria-label="Mover a la derecha"
+        class="btn-direccion" disabled>➡️</button>
 
       <button class="vacio" tabindex="-1" aria-hidden="true">-</button>
-      <button id="btnAbajo"  onclick="cambiarDireccion('abajo')" aria-label="Mover abajo" class="btn-direccion" disabled>⬇️</button>
+      <button id="btnAbajo" onclick="cambiarDireccion('abajo')" aria-label="Mover abajo" class="btn-direccion"
+        disabled>⬇️</button>
       <button class="vacio" tabindex="-1" aria-hidden="true">-</button>
     </section>
 
@@ -254,6 +265,8 @@
   <!-- El archivo JS con todas las animaciones y efectos visuales -->
   <!-- Es como el "cerebro" que hace que todo se mueva y brille -->
   <script src="serpiente.js"></script>
+  <!-- <script src="nivel2.js"></script> -->
   <!-- <script src="animacion.js"></script> -->
 </body>
+
 </html>

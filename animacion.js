@@ -86,7 +86,7 @@ const ESTADO_JUEGO = {
 };
 
 // El tamaño de cada cuadrito de la cuadrícula del juego
-const TAMANIO_CELDA = 25; // 500px ÷ 25 = 20 casillas × 20 casillas
+//const TAMANIO_CELDA = 25; // 500px ÷ 25 = 20 casillas × 20 casillas
 
 
 /* ================================================================

@@ -1007,6 +1007,23 @@ canvas {
 /* Cuando el juego empieza, el overlay desaparece */
 .canvas-overlay.oculto { opacity: 0; }
 
+/* game over  */
+.calavera3d {
+  width: 150px;          /* tamaño de la imagen */
+  display: block;
+  margin: 20px auto;     /* centrada */
+  animation: girar 3s infinite linear;
+  transform-style: preserve-3d;
+}
+
+@keyframes girar {
+  0%   { transform: rotateY(0deg); }
+  50%  { transform: rotateY(180deg); }
+  100% { transform: rotateY(360deg); }
+}
+
+
+
 
 /* ================================================================
    CONTROLES DIRECCIONALES (.controles, .vacio, .btn-direccion)
@@ -1197,6 +1214,8 @@ canvas {
   border-right-color: transparent;
   animation: none;
 }
+
+
 
 
 /* ================================================================
