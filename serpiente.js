@@ -12,7 +12,7 @@ const manzana = [];
 let puntos = 0;
 let comidaAtrapada = false;
 //Variable para el tiempo
-let tiempo = 300;
+let tiempo = 400;
 
 
 /////////////-- so so sonidoo
@@ -722,7 +722,7 @@ function gameOver() {
 ////////-----------------2. Implementar botón “Reiniciar juego” 
 function reiniciarJuego() {
   intervaloSerpiente = clearInterval(intervaloSerpiente);
-  tiempo = 300
+  tiempo = 400
   // Reiniciar intervalo con nueva velocidad
   intervaloSerpiente = clearInterval(intervaloSerpiente);
   // Resetear estado

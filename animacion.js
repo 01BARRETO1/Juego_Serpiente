@@ -225,7 +225,7 @@ function crearHoja() {
   // Cuánto tarda en caer (entre 5 y 12 segundos)
   const duracion = 5 + Math.random() * 7;
   hoja.style.animationDuration = duracion + 's';
-  hoja.style.fontSize = (10 + Math.random() * 12) + 'px';
+  hoja.style.fontSize = (10 + Math.random() * 14) + 'px';
   hoja.style.opacity = 0.4 + Math.random() * 0.5;
 
   capaHojas.appendChild(hoja);

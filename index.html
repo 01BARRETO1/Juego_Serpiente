@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <!-- Le decimos al navegador que use caracteres especiales, como letras con acento -->
+  <meta charset="UTF-8" />
+  <!-- Esto hace que la página se vea bien en celulares también -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+
+  
+  <title>Neon Slither: El Despertar Algorítmico 🐍</title>
+
+  <!-- Favicons (archivos dentro de la carpeta "favicon") -->
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+  <link rel="icon" href="favicon/favicon.ico" type="image/x-icon">
+  <link rel="manifest" href="favicon/site.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="favicon/android-chrome-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="favicon/android-chrome-512x512.png">
+
+  <!-- Google Fonts (igual estilo al ejemplo que mostraste) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Traemos dos fuentes bonitas de Google: una elegante y una futurista -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Nunito:wght@400;600;700&display=swap"
+    rel="stylesheet">
+
+  <!-- Aquí cargamos todos los colores y estilos bonitos de la página -->
+  <link rel="stylesheet" href="serpiente.css">
+</head>
+
+<body>
+
+  <!-- ============================================================
+       FONDO DEL PARAÍSO — capas que se mueven como el viento
+       Imagínate que es como decoraciones de una torta: cada capa
+       está encima de la otra y juntas hacen el jardín del Edén
+  ============================================================ -->
+  <div class="fondo-paraiso" aria-hidden="true">
+    <!-- El cielo bonito con luz dorada del sol -->
+    <div class="capa-cielo"></div>
+    <!-- Las nubes que se mueven despacio, como en un día soleado -->
+    <div class="capa-nubes">
+      <div class="nube nube-1"></div>
+      <div class="nube nube-2"></div>
+      <div class="nube nube-3"></div>
+    </div>
+    <!-- Las hojas que caen de vez en cuando -->
+    <div class="capa-hojas" id="capaHojas"></div>
+    <!-- El césped verde abajo de todo -->
+    <div class="capa-cesped"></div>
+  </div>
+
+  <!-- ============================================================
+       CONTENEDOR PRINCIPAL DEL JUEGO
+       Es como la caja donde vive todo el juego, con su decoración
+  ============================================================ -->
+  <main class="contenedor-juego">
+
+    <!-- ---- ESCENA DEL EDÉN: árbol a la izquierda, Eva a la derecha ---- -->
+    <!-- Esta sección es como el escenario de una obra de teatro -->
+    <div class="escena-eden" aria-hidden="true">
+
+      <!-- LADO IZQUIERDO: El árbol del conocimiento con la serpiente escondida -->
+      <!-- Como un árbol de navidad pero es el árbol más importante de la Biblia -->
+      <div class="lado-arbol">
+
+        <!-- 
+          PLACEHOLDER PARA GIF DEL ÁRBOL
+          ══════════════════════════════
+          Aquí va un GIF animado del árbol con manzanas brillantes.
+          
+          📋 ESPECIFICACIONES DEL GIF:
+          • Tamaño recomendado: 280×420 px (o 2x para pantallas retina: 560×840)
+          • Fondo: transparente (PNG apng / WebP animado / GIF con transparencia)
+          • Loop: infinito
+          • Contenido sugerido:
+            - Árbol frondoso con hojas que se mecen suavemente
+            - 5-8 manzanas rojas brillantes colgando de ramas
+            - Manzanas en el suelo que centellean con luz dorada
+            - Ramas que se balancean con la brisa
+          • Colores: verde esmeralda para hojas, rojo rubí para manzanas,
+            marrón cálido para el tronco, toques dorados en las manzanas
+          • Estilo: realista-místico, con un leve glow dorado en las manzanas
+          
+          Para reemplazar: elimina el <div class="placeholder-image" ...>
+          y reemplaza con: <img src="arbol.gif" alt="Árbol del conocimiento" 
+                                class="gif-arbol" loading="lazy">
+        -->
+        <div>
+          <img src="assets/arbol.gif" alt="Árbol del conocimiento" class="gif-arbol" loading="lazy" width="280px"
+            height="420px">
+
+
+        </div>
+      </div><!-- fin lado-arbol -->
+
+      <!-- LADO DERECHO: Eva, la primera mujer -->
+      <!-- Eva está parada mirando el árbol, curiosa y hermosa -->
+      <div class="lado-eva">
+
+        <!-- 
+          PLACEHOLDER PARA GIF DE EVA
+          ════════════════════════════
+          Aquí va un GIF animado de Eva.
+          
+          📋 ESPECIFICACIONES DEL GIF:
+          • Tamaño recomendado: 200×380 px (o 2x: 400×760)
+          • Fondo: transparente
+          • Loop: infinito
+          • Personaje: mujer adulta, cabello largo rojizo-cobrizo que cae
+            hasta las caderas, ojos azules brillantes.
+          • COBERTURA MODESTA (Eva aún no mordió la manzana — 
+            está sin ropa pero el cabello largo la cubre naturalmente):
+            - Cabello cae sobre el pecho cubriendo completamente la zona
+            - Una pierna adelante o postura que crea sombra natural
+            - Sin mostrar genitales ni pezones en ningún frame
+          • Animación sugerida:
+            - Eva se balancea suavemente de un lado al otro
+            - Mira hacia el árbol, parpadeando
+            - Una mano extendida ligeramente hacia el árbol (curiosidad)
+            - Cabello que se mueve con la brisa
+          • Colores: piel cálida dorada, cabello rojizo-cobrizo,
+            ojos azul cielo, leve brillo dorado celestial alrededor
+          
+          Para reemplazar: elimina el <div class="placeholder-image" ...>
+          y reemplaza con: <img src="eva.gif" alt="Eva en el jardín del Edén"
+                                class="gif-eva" loading="lazy">
+        -->
+        <div>
+          <img src="assets/eva.gif" alt="Eva en el jardín del Edén" class="gif-eva" loading="lazy" width="200px"
+            height="380px">
+
+
+        </div>
+      </div><!-- fin lado-eva -->
+
+    </div><!-- fin escena-eden -->
+
+    <!-- ============================================================
+         TÍTULO DEL JUEGO
+         Es el nombre grande y brillante del juego
+    ============================================================ -->
+    <!-- El emoji de serpiente gira porque tiene la clase "serpiente-girando" -->
+    <h1>
+      <!-- La serpiente que gira con borde brillante -->
+      <span class="serpiente-girando" aria-hidden="true">🐍</span>
+      <!-- El texto con brillo que pasa por las letras como un arcoíris -->
+      <span class="titulo-texto texto-brillo">Neon Slither</span>
+    </h1>
+    <div class="subtitulo-texto texto-brillo" aria-label="El Despertar Algorítmico">El Despertar Algorítmico</div>
+
+    <!-- ============================================================
+         DESCRIPCIÓN CREATIVA DEL JUEGO
+         Cuenta de qué se trata el juego con palabras bonitas
+    ============================================================ -->
+    <p class="descripcion">
+      <!-- El brillo pasa sobre estas palabras también -->
+      <span class="texto-brillo-suave">
+        En el jardín donde nació la tentación, una serpiente de neón serpentea entre el código digital.
+        <br>Devora las manzanas del conocimiento, esquiva tu propio rastro y desafía el destino algorítmico.
+        <br><em>¿Podrás resistir la tentación… o sucumbirás al bucle infinito?</em>
+      </span>
+    </p>
+
+    <!-- ============================================================
+         PANEL DE INFORMACIÓN (puntaje y estado)
+         Como el marcador de un partido de fútbol
+    ============================================================ -->
+    <!-- Aquí están los "globos" con los números del juego -->
+    <section class="panel-info" aria-label="Información del juego">
+      <!-- La tarjeta del puntaje, como un cartelito que dice cuántos puntos tienes -->
+      <div class="tarjeta-info">
+        <span>Puntaje</span>
+        <!-- El número grande y 3D como un globo flotante -->
+        <strong id="puntaje" class="numero-3d">0</strong>
+      </div>
+      </div>
+      <!-- La tarjeta del estado, dice si el juego está listo, jugando o pausado -->
+      <div class="tarjeta-info">
+        <span>Estado</span>
+        <!-- También es un globo 3D flotante -->
+        <strong id="estado" class="numero-3d estado-texto">Listo</strong>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         EL CANVAS (tablero del juego)
+         Es como una pizarra donde más tarde va a aparecer la serpiente
+         que el usuario controla. ¡Pero eso viene después!
+    ============================================================ -->
+    <!-- 
+      IMPORTANTE PARA EL PROGRAMADOR:
+      ══════════════════════════════
+      Este canvas es donde irá la lógica del juego.
+      Las dimensiones width="500" height="500" NO se deben cambiar
+      porque la cuadrícula del juego depende de esos píxeles exactos.
+      
+      CÓMO CONECTAR LA LÓGICA DEL JUEGO (para el futuro):
+      1. En serpiente.js, busca la sección "LÓGICA DEL JUEGO"
+      2. Obtén el canvas: const canvas = document.getElementById('canvasJuego')
+      3. Obtén el contexto 2D: const ctx = canvas.getContext('2d')
+      4. Las funciones iniciarJuego(), pausarJuego(), reiniciarJuego()
+         ya están definidas y listas para recibir tu lógica.
+      5. cambiarDireccion(dir) ya recibe 'arriba','abajo','izquierda','derecha'
+    -->
+    <div class="canvas-marco" aria-label="Tablero del juego">
+      <!-- La luz de neón que rodea el canvas -->
+      <div class="canvas-glow" aria-hidden="true"></div>
+      <!-- El canvas real — aquí irá la lógica del juego más adelante; por ahora solo es el marco decorativo -->
+      <canvas id="canvasJuego" width="500" height="500" role="img" aria-label="Tablero del juego de la serpiente">
+      </canvas>
+      <!-- Texto de fondo dentro del canvas (decorativo, visible antes de iniciar) -->
+      <div class="canvas-overlay" id="canvasOverlay" aria-hidden="true">
+        <div class="canvas-overlay-icon">🐲</div>
+        <div class="canvas-overlay-texto">Eva ha mordido la manzana...</div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         CONTROLES DIRECCIONALES
+         Como el control de un videojuego, con flechas para moverse
+    ============================================================ -->
+    <!-- 
+      El grid 3x3 de los controles:
+      [vacío]  [↑]    [vacío]
+      [←]      [⏸️]    [→]
+      [vacío]  [↓]    [vacío]
+    -->
+    <section class="controles" aria-label="Controles de dirección">
+      <!-- Las celdas vacías ayudan a que los botones queden en la posición correcta -->
+      <button class="vacio" tabindex="-1" aria-hidden="true">-</button>
+      <button id="btnArriba" onclick="cambiarDireccion('arriba')" aria-label="Mover arriba" class="btn-direccion"
+        disabled>⬆️</button>
+      <button class="vacio" tabindex="-1" aria-hidden="true">-</button>
+
+      <button id="btnIzquierda" onclick="cambiarDireccion('izquierda')" aria-label="Mover a la izquierda"
+        class="btn-direccion" disabled>⬅️</button>
+      <!-- El botón de pausa está en el centro, como el corazón del control -->
+      <button id="pausa" onclick="pausarJuego()" aria-label="Pausar o reanudar el juego" class="btn-pausa"
+        disabled>⏸️</button>
+      <button id="btnDerecha" onclick="cambiarDireccion('derecha')" aria-label="Mover a la derecha"
+        class="btn-direccion" disabled>➡️</button>
+
+      <button class="vacio" tabindex="-1" aria-hidden="true">-</button>
+      <button id="btnAbajo" onclick="cambiarDireccion('abajo')" aria-label="Mover abajo" class="btn-direccion"
+        disabled>⬇️</button>
+      <button class="vacio" tabindex="-1" aria-hidden="true">-</button>
+    </section>
+
+    <!-- ============================================================
+         BOTONES DE ACCIÓN (iniciar y reiniciar)
+         Como el botón de "play" y "reset" de un reproductor de música
+    ============================================================ -->
+    <section class="acciones" aria-label="Acciones del juego">
+      <!-- El botón grande verde para empezar a jugar -->
+      <button id="iniciarJuego" onclick="iniciarJuego()" class="btn-iniciar" aria-label="Iniciar el juego" disabled>
+        ▶ Iniciar
+      </button>
+      <!-- El botón azul para volver a empezar desde cero -->
+      <button class="secundario" onclick="reiniciarJuego()" aria-label="Reiniciar el juego">
+        ↺ Reiniciar
+      </button>
+    </section>
+
+    <!-- ============================================================
+         MENSAJE AL JUGADOR
+         Como un cartel que aparece letra por letra, como si alguien
+         lo estuviera escribiendo en ese momento
+    ============================================================ -->
+    <!-- El texto aparece despacio, letra por letra — como magia -->
+    <p id="mensaje" class="mensaje" aria-live="polite">Presiona iniciar para comenzar.</p>
+
+  </main><!-- fin contenedor-juego -->
+
+  <!-- El archivo JS con todas las animaciones y efectos visuales -->
+  <!-- Es como el "cerebro" que hace que todo se mueva y brille -->
+  <script src="serpiente.js"></script>
+  <script src="nivel2.js"></script>
+  <script src="animacion.js"></script>
+</body>
+
+</html>
